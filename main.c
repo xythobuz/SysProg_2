@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/time.h>
+#include <sys/select.h>
 #include <string.h>
 
 int main(void) {
@@ -71,10 +73,27 @@ int main(void) {
         }
 
         close(stdinPipe[1]);
+        // Timeout
+        fd_set rfds;
+        struct timespec ts;
+        FD_ZERO(&rfds);
+        FD_SET(stdoutPipe[0], &rfds);
+        // Timeout setzen
+        ts.tv_sec = 5;
 
-        //Daten aus dem Leseende von stdoutPipe von Kindprozess lesen
-        while((readPos < sizeof(readBuffer) - 1) && (summary_read = read(stdoutPipe[0], readBuffer+readPos, sizeof(readBuffer))) > 0) {
-            readPos += summary_read;
+        int retval = pselect(1, &rfds, NULL, NULL, &ts, NULL);
+        if(retval == -1) {
+            perror("pselect()");
+        }
+        else if(retval) {
+            // Daten aus dem Leseende von stdoutPipe von Kindprozess lesen
+            while((readPos < sizeof(readBuffer) - 1) && (summary_read = read(stdoutPipe[0], readBuffer+readPos, sizeof(readBuffer))) > 0) {
+                readPos += summary_read;
+            }
+        }
+        else {
+            printf("No data within five seconds \n");
+            return 0;
         }
 
         readBuffer[readPos] = '\0';
