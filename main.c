@@ -77,6 +77,7 @@ int main(void) {
         FD_ZERO(&rfds);
         FD_SET(stdoutPipe[0], &rfds);
         ts.tv_sec = 5; // 5s
+        ts.tv_nsec = 0;
 
         int retval = pselect(stdoutPipe[0] + 1, &rfds, NULL, NULL, &ts, NULL);
         if (retval == -1) {

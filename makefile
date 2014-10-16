@@ -1,7 +1,7 @@
 all: main waitforme
 
 main: main.c
-	gcc -g -std=c11 -Wall -o main main.c -D_POSIX_C_SOURCE
+	gcc -g -std=c11 -Wall -o main main.c -D_POSIX_C_SOURCE=200112L
 
 waitforme: waitforme.c
 	gcc -g -std=c11 -Wall -o waitforme waitforme.c
