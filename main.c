@@ -90,7 +90,7 @@ int main(void) {
         } else {
             // Daten aus dem Leseende von stdoutPipe von Kindprozess lesen
             while((readPos < (sizeof(readBuffer) - 1)) && (summary_read = read(stdoutPipe[0],
-                            readBuffer + readPos, (sizeof(readBuffer) - 1))) > 0) {
+                            readBuffer + readPos, (sizeof(readBuffer) - 1 - readPos))) > 0) {
                 readPos += summary_read;
             }
         }
